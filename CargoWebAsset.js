@@ -198,7 +198,7 @@ class CargoWebAsset extends Asset {
     static async install_nightly() {
         const rustup_show_output = await CargoWebAsset.exec("rustup show");
         const activeToolchains = rustup_show_output.split(/^active toolchain$/m)[1];
-        if (!activeToolchains.includes(REQUIRED_NIGHTLY)) {
+        if (!activeToolchains || !activeToolchains.includes(REQUIRED_NIGHTLY)) {
             await pipeSpawn("rustup", ["update"]);
             await pipeSpawn("rustup", ["override", "set", REQUIRED_NIGHTLY]);
         }
