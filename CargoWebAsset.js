@@ -7,6 +7,7 @@ const Asset = require( "parcel-bundler/src/Asset" );
 const path = require( "path" );
 
 const REQUIRED_CARGO_WEB = [0, 6, 2];
+const REQUIRED_NIGHTLY = "nightly-2018-07-11";
 
 class CargoWebAsset extends Asset {
     constructor( name, options ) {
@@ -116,9 +117,6 @@ class CargoWebAsset extends Asset {
 
         const dir = path.dirname( await config.resolve( this.name, ["Cargo.toml"] ) );
         const args = [
-            "run",
-            "nightly",
-            cargo_web_command,
             "build",
             "--target",
             "wasm32-unknown-unknown",
@@ -133,7 +131,7 @@ class CargoWebAsset extends Asset {
             stdio: ["ignore", "pipe", "pipe"]
         };
 
-        const rust_build = spawn( "rustup", args, opts );
+        const rust_build = spawn(cargo_web_command, args, opts);
         const rust_build_process = rust_build.childProcess;
 
         let artifact_wasm = null;
@@ -198,10 +196,11 @@ class CargoWebAsset extends Asset {
     }
 
     static async install_nightly() {
-        const rustup_show_output = await CargoWebAsset.exec( "rustup show" );
-        if( !rustup_show_output.includes( "nightly" ) ) {
-            await pipeSpawn( "rustup", ["update"] );
-            await pipeSpawn( "rustup", ["toolchain", "install", "nightly"] );
+        const rustup_show_output = await CargoWebAsset.exec("rustup show");
+        const activeToolchains = rustup_show_output.split(/^active toolchain$/m)[1];
+        if (!activeToolchains.includes(REQUIRED_NIGHTLY)) {
+            await pipeSpawn("rustup", ["update"]);
+            await pipeSpawn("rustup", ["override", "set", REQUIRED_NIGHTLY]);
         }
     }
 
