@@ -6,8 +6,8 @@ const pipeSpawn = require( "parcel-bundler/src/utils/pipeSpawn" );
 const Asset = require( "parcel-bundler/src/Asset" );
 const path = require( "path" );
 
-const REQUIRED_CARGO_WEB = [0, 6, 2];
-const REQUIRED_NIGHTLY = "nightly-2018-07-11";
+const REQUIRED_CARGO_WEB = [0, 6, 15];
+const REQUIRED_NIGHTLY = "nightly-2018-07-31";
 
 class CargoWebAsset extends Asset {
     constructor( name, options ) {
